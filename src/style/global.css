@@ -1,0 +1,96 @@
+@font-face {
+  font-family: "Colonna";
+  src: url("@public/Colonna MT Std Regular.otf") format("otf");
+  font-weight: normal;
+  font-style: normal;
+}
+/* 基礎重置與動畫增強 */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+}
+#smooth-wrapper {
+  overflow: hidden;
+}
+
+#smooth-content {
+  will-change: transform;
+}
+
+
+/* GSAP 動畫補強 */
+.gsap-marker-start,
+.gsap-marker-end {
+  height: 0 !important;
+}
+
+/* 自定義滾動條 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3a86ff;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #0058cb;
+}
+
+
+
+
+
+/* 時間軸動畫優化 */
+.timeline-item {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+/* 媒體懸停效果 */
+.media-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.media-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(58, 134, 255, 0.3) !important;
+}
+
+/* 按鈕波紋效果覆寫 */
+.MuiTouchRipple-root {
+  color: white;
+}
+
+/* 響應式字體調整 */
+@media (max-width: 600px) {
+  html {
+    font-size: 14px;
+  }
+
+  .MuiTypography-h1 {
+    font-size: 2.5rem !important;
+  }
+
+  .MuiTypography-h2 {
+    font-size: 2rem !important;
+  }
+}
