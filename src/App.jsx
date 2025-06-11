@@ -14,27 +14,19 @@ import { Footer } from './components/Footer';
 
 gsap.registerPlugin(ScrollSmoother, ScrollTrigger);
 
-// 全局 ScrollTrigger 配置
 ScrollTrigger.config({
-  // 啟用慣性效果
   inertia: 0.85,
-  // 限制回調頻率提高性能
   limitCallbacks: true,
-  // 忽略移動設備的resize事件
   ignoreMobileResize: true,
-  // 自動修正滾動速度
   autoAdjustScroll: true
 });
 
-// 檢測iOS設備並應用額外優化
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
               (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
 if (isIOS) {
-  // iOS專用優化
   ScrollTrigger.normalizeScroll(true);
 
-  // 防止滾動鎖定
   document.addEventListener('touchmove', (e) => {
     if (ScrollTrigger.isScrolling) {
       e.preventDefault();

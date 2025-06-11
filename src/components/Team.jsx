@@ -5,24 +5,24 @@ import {ScrollToPlugin} from 'gsap/ScrollToPlugin';
 import {SplitText} from 'gsap/SplitText';
 import {Row, Col, Card, Typography, Avatar, Space, Grid, Image, Skeleton} from 'antd';
 import {TwitterOutlined} from '@ant-design/icons';
-import Pose1 from "../assets/Pose1.webp";
-import Pose2 from "../assets/Pose2.webp";
+import Pose1 from "../assets/Picture1.webp";
+import Pose3 from "../assets/Pose3.webp"
 
 import {News} from "./News.jsx";
 
-// 只在客戶端註冊 GSAP 插件
+
 if (typeof window !== 'undefined') {
     gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, SplitText);
 
-    // 檢測iOS設備並應用額外優化
+
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
         (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
     if (isIOS) {
-        // iOS專用優化
+
         ScrollTrigger.normalizeScroll(true);
 
-        // 防止滾動鎖定
+
         document.addEventListener('touchmove', (e) => {
             if (ScrollTrigger.isScrolling) {
                 e.preventDefault();
@@ -35,7 +35,7 @@ if (typeof window !== 'undefined') {
 const {useBreakpoint} = Grid;
 const {Title, Text} = Typography;
 
-// 感謝人員名單數據
+
 const teamData = {
     organizers: [
         {
@@ -54,9 +54,22 @@ const teamData = {
     artists: [
         {
             name: '瑋B',
-            role: '繪師',
+            role: '主繪師',
             twitter: 'WeiB_artist',
             twitterUrl: 'https://x.com/WeiB_artist'
+        },
+        {
+            name: '丕嗣',
+            role: '插圖繪師',
+            twitter: 'haskyyyyy1',
+            twitterUrl: 'https://x.com/haskyyyyy1'
+        },
+
+        {
+            name: '泡泡',
+            role: '插圖繪師',
+            twitter: 'h_bubble93',
+            twitterUrl: 'https://x.com/h_bubble93'
         },
         {
             name: '小鶴',
@@ -73,7 +86,7 @@ const teamData = {
         {
             name: '熊熊',
             role: '網頁設計',
-            twitter: '@rxbear0627',
+            twitter: 'rxbear0627',
             twitterUrl: 'https://x.com/rxbear0627',
             avatarUrl: 'https://pbs.twimg.com/profile_images/1921233359126360067/45ueaxMr_400x400.jpg'
         },
@@ -143,7 +156,7 @@ const teamData = {
     ]
 };
 
-// 圖片預加載 Hook
+
 const useImagePreloader = (imageSources) => {
     const [loadedImages, setLoadedImages] = useState({});
     const [allImagesLoaded, setAllImagesLoaded] = useState(false);
@@ -189,7 +202,7 @@ const useImagePreloader = (imageSources) => {
     return {loadedImages, allImagesLoaded};
 };
 
-// 優化的圖片組件
+
 const OptimizedImage = ({src, alt, style, imageRef, placeholder = true}) => {
     const [imageLoaded, setImageLoaded] = useState(false);
     const [hasError, setHasError] = useState(false);
@@ -246,7 +259,7 @@ const OptimizedImage = ({src, alt, style, imageRef, placeholder = true}) => {
                     willChange: 'transform',
                     transition: 'opacity 0.3s ease-in-out'
                 }}
-                loading="lazy" // 懶加載
+                loading="lazy"
             />
         </div>
     );
@@ -260,7 +273,7 @@ export const Team = () => {
     const sectionRefs = useRef([]);
     const imageRefs = useRef([]);
     const screens = useBreakpoint();
-// 獲取Twitter頭像URL - 添加緩存
+
     const getTwitterAvatar = useMemo(() => {
         const cache = new Map();
         return (username, size = 'bigger') => {
@@ -271,13 +284,13 @@ export const Team = () => {
             return cache.get(key);
         };
     }, []);
-    // 使用 useMemo 優化 sideImages
-    const sideImages = useMemo(() => [Pose1, Pose2], []);
 
-    // 預加載圖片
+    const sideImages = useMemo(() => [Pose3, Pose1], []);
+
+
     const {loadedImages, allImagesLoaded} = useImagePreloader(sideImages);
 
-    // 初始化 smooth scroll
+
     useEffect(() => {
         if (typeof window !== 'undefined') {
             gsap.to(window, {
@@ -290,16 +303,16 @@ export const Team = () => {
         }
     }, []);
 
-    // 設置動畫 - 等待圖片加載完成後再執行
+
     useEffect(() => {
         if (!teamRef.current || typeof window === 'undefined' || !allImagesLoaded) return;
 
-        // 使用 requestAnimationFrame 確保 DOM 渲染完成
+
         const setupAnimations = () => {
             requestAnimationFrame(() => {
-                // 創建 GSAP 上下文
+
                 const ctx = gsap.context(() => {
-                    // 標題動畫
+
                     if (titleRef.current && subtitleRef.current) {
                         const splitTitle = new SplitText(titleRef.current, {
                             type: "chars"
@@ -308,7 +321,6 @@ export const Team = () => {
                             type: "words"
                         });
 
-                        // 啟用硬體加速
                         gsap.set([...splitTitle.chars, ...splitSubtitle.words], {
                             willChange: 'transform, opacity',
                             backfaceVisibility: 'hidden'
@@ -339,7 +351,7 @@ export const Team = () => {
                         }, 0.2);
                     }
 
-                    // 各區塊交錯動畫 - 使用節流避免過度計算
+
                     sectionRefs.current.forEach((section, index) => {
                         if (!section) return;
 
@@ -354,8 +366,8 @@ export const Team = () => {
                         gsap.from(cards, {
                             opacity: 0,
                             x: index % 2 === 0 ? -50 : 50,
-                            stagger: 0.15, // 稍微減少 stagger 時間
-                            duration: 0.6, // 減少動畫時間
+                            stagger: 0.15,
+                            duration: 0.6,
                             ease: "power2.out",
                             force3D: true,
                             scrollTrigger: {
@@ -365,7 +377,7 @@ export const Team = () => {
                             }
                         });
 
-                        // 圖片動畫 - 只在圖片加載完成後執行
+
                         if (imageRefs.current[index] && loadedImages[sideImages[index]]) {
                             gsap.set(imageRefs.current[index], {
                                 willChange: 'transform',
@@ -374,9 +386,9 @@ export const Team = () => {
 
                             gsap.from(imageRefs.current[index], {
                                 opacity: 0,
-                                scale: 0.9, // 減少縮放程度
-                                duration: 0.8, // 減少動畫時間
-                                ease: "power2.out", // 使用更平滑的 easing
+                                scale: 0.9,
+                                duration: 0.8,
+                                ease: "power2.out",
                                 force3D: true,
                                 scrollTrigger: {
                                     trigger: imageRefs.current[index],
@@ -387,10 +399,10 @@ export const Team = () => {
                         }
                     });
 
-                    // 延遲刷新 ScrollTrigger
+
                     setTimeout(() => {
                         ScrollTrigger.refresh();
-                    }, 500); // 減少延遲時間
+                    }, 500);
 
                 }, teamRef);
 
@@ -408,7 +420,7 @@ export const Team = () => {
         };
     }, [allImagesLoaded, loadedImages, sideImages]);
 
-    // 添加 ref 到數組
+
     const addToRefs = (el, index) => {
         if (el) sectionRefs.current[index] = el;
     };
@@ -421,11 +433,11 @@ export const Team = () => {
 
         const handleError = () => {
             if (retryCount === 0 && avatarUrl) {
-                // 第一次失敗且存在 avatarUrl，嘗試使用 avatarUrl
+
                 setCurrentSrc(avatarUrl);
                 setRetryCount(1);
             } else {
-                // 如果還是失敗或沒有 avatarUrl，使用 Twitter 默認頭像
+
                 setCurrentSrc(
                     `https://abs.twimg.com/sticky/default_profile_images/default_profile_${size > 48 ? 'bigger' : 'normal'}.png`
                 );
@@ -514,7 +526,9 @@ export const Team = () => {
                         style={{
                             borderRadius: '8px',
                             width: '100%',
-                            height: 'auto'
+                            height: 'auto',
+                            // transform: "scaleX(-1)"
+
                         }}
                     />
                 </Col>
@@ -530,7 +544,9 @@ export const Team = () => {
                         style={{
                             borderRadius: '8px',
                             width: '100%',
-                            height: 'auto'
+                            height: 'auto',
+                            transform: "translateY(5%)",
+
                         }}
                     />
                 </Col>

@@ -16,27 +16,27 @@ export const News = () => {
     const imgRef = useRef(null);
     const isExpanded = useRef(false);
 
-    // 使用 useMediaQuery 檢測是否為手機設備
+
     const isMobile = useMediaQuery({ maxWidth: 768 });
     const [initialWidth, setInitialWidth] = useState('100%');
 
     useEffect(() => {
-        // 根據設備類型設置初始寬度
+
         setInitialWidth(isMobile ? '100%' : '100%');
     }, [isMobile]);
 
     const toggleCardSize = () => {
-        if (!cardRef.current || isMobile) return; // 如果是手機設備，不執行放大效果
+        if (!cardRef.current || isMobile) return;
 
         if (isExpanded.current) {
-            // 縮小回原始尺寸
+
             gsap.to(cardRef.current, {
                 width: initialWidth,
                 duration: 0.5,
                 ease: "power2.inOut"
             });
         } else {
-            // 放大到全寬
+
             gsap.to(cardRef.current, {
                 width: '100vw',
                 duration: 0.5,
@@ -50,7 +50,7 @@ export const News = () => {
         const ctx = gsap.context(() => {
             if (!cardRef.current || !titleRef.current) return;
 
-            // 圖片卡片動畫
+
             gsap.fromTo(cardRef.current,
                 { opacity: 0, y: 100, scale: 0.95 },
                 {
@@ -70,7 +70,7 @@ export const News = () => {
                 }
             );
 
-            // 標題動畫
+
             gsap.from(titleRef.current, {
                 scrollTrigger: {
                     trigger: containerRef.current,
@@ -84,7 +84,7 @@ export const News = () => {
                 ease: "elastic.out(1, 0.5)"
             });
 
-            // 背景動畫
+
             gsap.to(containerRef.current, {
                 scrollTrigger: {
                     trigger: containerRef.current,
@@ -137,11 +137,11 @@ export const News = () => {
                 style={{
                     width: initialWidth,
                     transition: 'width 0.5s ease',
-                    maxWidth: '100vw' // 確保在移動設備上不會超出屏幕
+                    maxWidth: '100vw'
                 }}
             >
                 <Card
-                    hoverable={!isMobile} // 手機上禁用 hover 效果
+                    hoverable={!isMobile}
                     style={{
                         borderRadius: '12px',
                         overflow: 'hidden',

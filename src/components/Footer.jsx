@@ -12,50 +12,54 @@ export const Footer = () => {
     const contentRefs = useRef([]);
     const [isMounted, setIsMounted] = useState(false);
 
-    // 確保只在客戶端執行
+
     useEffect(() => {
         setIsMounted(true);
     }, []);
 
-    // GSAP animation initialization
+
     useEffect(() => {
         if (!isMounted || typeof window === 'undefined') return;
 
-        // 註冊ScrollTrigger插件
+
         gsap.registerPlugin(ScrollTrigger);
 
-        // 檢測移動設備
+
         const isMobile = window.matchMedia('(max-width: 768px)').matches;
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
-        // 移動設備專用配置
+
         if (isMobile) {
-            // ScrollTrigger移動設備配置
             ScrollTrigger.config({
                 limitCallbacks: true,
-                ignoreMobileResize: true, // 忽略移動設備resize
+                ignoreMobileResize: true,
             });
 
-            // iOS特殊處理
             if (isIOS) {
                 ScrollTrigger.normalizeScroll(true);
             }
         }
 
-        // 等待DOM完全加載後初始化動畫
+
         const initAnimations = () => {
+
+            if (!sectionRef.current) {
+                // console.warn('Section ref not found, retrying...');
+                return null;
+            }
+
             const ctx = gsap.context(() => {
-                // 根據設備類型調整動畫參數
+
                 const startOffset = isMobile ? "top 90%" : "top 85%";
                 const yOffset = isMobile ? 20 : 15;
                 const duration = isMobile ? 0.5 : 0.7;
 
-                // 移除調試標記
+
                 ScrollTrigger.defaults({
                     markers: false
                 });
 
-                // 標題動畫
+
                 if (titleRef.current) {
                     gsap.fromTo(titleRef.current,
                         {
@@ -71,15 +75,17 @@ export const Footer = () => {
                                 trigger: sectionRef.current,
                                 start: startOffset,
                                 toggleActions: "play none none none",
-                                once: true, // 只播放一次，不會反向
+                                once: true,
                                 refreshPriority: -1,
-
+                                // onToggle: (self) => {
+                                // console.log('Title animation triggered:', self.isActive);
+                                // }
                             }
                         }
                     );
                 }
 
-                // 內容動畫
+
                 contentRefs.current.forEach((ref, i) => {
                     if (ref) {
                         gsap.fromTo(ref,
@@ -97,51 +103,79 @@ export const Footer = () => {
                                     trigger: sectionRef.current,
                                     start: startOffset,
                                     toggleActions: "play none none none",
-                                    once: true, // 只播放一次，不會反向
+                                    once: true,
                                     refreshPriority: -1,
-
+                                    // onToggle: (self) => {
+                                    // console.log(`Content ${i} animation triggered:`, self.isActive);
+                                    // }
                                 }
                             }
                         );
                     }
                 });
 
-                // 移動設備特殊處理
-                if (isMobile) {
-                    // 延遲刷新確保正確計算
-                    setTimeout(() => {
-                        ScrollTrigger.refresh();
-                    }, 100);
-
-                    // 監聽滾動事件來手動觸發刷新
-                    let scrollTimeout;
-                    const handleScroll = () => {
-                        clearTimeout(scrollTimeout);
-                        scrollTimeout = setTimeout(() => {
-                            ScrollTrigger.refresh();
-                        }, 150);
-                    };
-
-                    window.addEventListener('scroll', handleScroll, { passive: true });
-
-                    return () => {
-                        window.removeEventListener('scroll', handleScroll);
-                        clearTimeout(scrollTimeout);
-                    };
-                }
             }, sectionRef);
 
             return ctx;
         };
 
-        // 延遲初始化確保DOM完全準備好
-        const timeoutId = setTimeout(initAnimations, 100);
+
+        let animationFrameId;
+        let ctx;
+
+        const startAnimation = () => {
+            ctx = initAnimations();
+
+            if (!ctx) {
+
+                animationFrameId = requestAnimationFrame(() => {
+                    setTimeout(startAnimation, 50);
+                });
+                return;
+            }
+
+
+            if (isMobile) {
+                setTimeout(() => {
+                    ScrollTrigger.refresh();
+                }, 100);
+            }
+        };
+
+
+        const timeoutId = setTimeout(startAnimation, 100);
 
         return () => {
+
             clearTimeout(timeoutId);
-            // 清理所有ScrollTrigger實例
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+
+
+            if (ctx) {
+                ctx.revert();
+            }
+
+
             ScrollTrigger.getAll().forEach(trigger => trigger.kill());
             ScrollTrigger.clearMatchMedia();
+        };
+    }, [isMounted]);
+
+
+    useEffect(() => {
+        if (!isMounted) return;
+
+
+        const handleRefresh = () => {
+            // console.log('ScrollTrigger refreshed');
+        };
+
+        ScrollTrigger.addEventListener('refresh', handleRefresh);
+
+        return () => {
+            ScrollTrigger.removeEventListener('refresh', handleRefresh);
         };
     }, [isMounted]);
 
@@ -151,7 +185,7 @@ export const Footer = () => {
         }
     };
 
-    // 服務端渲染時不顯示動畫效果
+
     if (!isMounted) {
         return (
             <div
@@ -166,7 +200,7 @@ export const Footer = () => {
                     <Title level={4} style={{textAlign: 'center', marginBottom: '24px', fontWeight: 500}}>
                         未來冰淇淋販売所
                     </Title>
-                    {/* 其餘內容保持不變... */}
+
                 </div>
             </div>
         );
@@ -184,7 +218,7 @@ export const Footer = () => {
             }}
         >
             <div style={{maxWidth: '1200px', margin: '0 auto'}}>
-                {/* Title */}
+
                 <Title
                     ref={titleRef}
                     level={4}
@@ -198,7 +232,7 @@ export const Footer = () => {
                     未來冰淇淋販売所
                 </Title>
 
-                {/* Social Links */}
+
                 <div
                     ref={addContentRef}
                     style={{
@@ -233,7 +267,7 @@ export const Footer = () => {
                     </Text>
                 </div>
 
-                {/* Special Notice Card */}
+
                 <Card
                     ref={addContentRef}
                     title="特別聲明"
@@ -265,7 +299,7 @@ export const Footer = () => {
                     />
                 </Card>
 
-                {/* Discord Link */}
+
                 <div
                     ref={addContentRef}
                     style={{

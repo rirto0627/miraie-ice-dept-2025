@@ -86,7 +86,7 @@ export const TimeLine = () => {
       ease: "none"
     });
 
-    ScrollTrigger.refresh(); // 強制觸發點重新計算
+    ScrollTrigger.refresh();
   });
 
   return () => ScrollTrigger.getAll().forEach(t => t.kill());
